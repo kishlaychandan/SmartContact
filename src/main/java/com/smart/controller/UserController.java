@@ -87,20 +87,30 @@ public class UserController {
 	public String processContact(@ModelAttribute Contact contact,@RequestParam("profileImage") MultipartFile file, Principal principal,HttpSession session) {
 		
 		try {
-		
-//			processing and uploading file
-			if(file.isEmpty()) {
-				System.out.println("file is empty");
-				contact.setImage("contact.png");
-			}
-			else {
-				contact.setImage(file.getOriginalFilename());
-				File saveFile=new ClassPathResource("static/img").getFile();
-				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
-				Files.copy(file.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-				System.out.println("Imgis uploaded");
-			}
-			
+			// Check if the file is empty
+		    if (file.isEmpty()) {
+		        System.out.println("File is empty");
+		        contact.setImage("contact.png");
+		    } else {
+		        contact.setImage(file.getOriginalFilename());
+
+		        // Get the ClassPathResource for the destination folder
+		        ClassPathResource resource = new ClassPathResource("static/img/");
+
+		        // Create the destination directory if it doesn't exist
+		        if (!resource.exists()) {
+		            resource.getFile().mkdirs();
+		        }
+
+		        // Define the destination path for the uploaded file
+		        Path destinationPath = Paths.get(resource.getFile().getAbsolutePath(), file.getOriginalFilename());
+
+		        // Copy the file to the destination path
+		        Files.copy(file.getInputStream(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+		        System.out.println("Image uploaded to: " + destinationPath.toString());
+		    }
+
+		    // Rest of your code to save the contact and display messages	
 			
 		String name=principal.getName();
 		User user =this.userRepository.getUserByUserName(name);
