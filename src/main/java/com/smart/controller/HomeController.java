@@ -1,19 +1,17 @@
 package com.smart.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.smart.UserRepository;
-import com.smart.entities.Contact;
 import com.smart.entities.User;
 import com.smart.helper.Message;
 
@@ -23,6 +21,8 @@ import jakarta.validation.Valid;
 @Controller
 public class HomeController {
 	
+	@Autowired
+	private BCryptPasswordEncoder passwordEncoder;
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -48,7 +48,8 @@ public class HomeController {
 	//this is handler for register user
 	
 	@RequestMapping(value="/do_register",method = RequestMethod.POST)
-	public String registerUser(@Valid @ModelAttribute("user") User user,BindingResult result1,@RequestParam(value="agreement",defaultValue="false") boolean agreement,Model m,HttpSession session) {
+	public String registerUser(@Valid @ModelAttribute("user") User user,BindingResult result1,@RequestParam(value="agreement",defaultValue="false") boolean agreement,Model m,HttpSession session) 
+	{
 		
 		try {
 			
@@ -63,9 +64,10 @@ public class HomeController {
 				return "signup";
 			}
 			
-			user.setRole("role user");
+			user.setRole("ROLE_USER");
 			user.setEnabled(true);
 			user.setImageurl("default.png");
+			user.setPassword(passwordEncoder.encode(user.getPassword()));
 			
 			System.out.println("Agreement "+agreement);
 			System.out.println("user"+user);
@@ -90,6 +92,12 @@ public class HomeController {
 
 	}
 	
-	
+	//handler for custom login
+	@GetMapping("/signin")
+	public String CustomLogin(Model m) {
+		m.addAttribute("title", "login page");
+		
+		return "login";
+	}
 	
 }

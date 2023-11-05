@@ -97,6 +97,17 @@ public class Contact {
 	public void setUser(User user) {
 		this.user = user;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return this.cId==((Contact)obj).getcId();
+	}
+	
+	
+
+	
+	
 	
 	
 	
