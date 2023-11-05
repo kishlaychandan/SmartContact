@@ -98,7 +98,7 @@ public class UserController {
 				File saveFile=new ClassPathResource("static/img").getFile();
 				Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
 				Files.copy(file.getInputStream(),path, StandardCopyOption.REPLACE_EXISTING);
-				System.out.println("Imgis uploaded");
+				System.out.println("Image uploaded");
 			}
 			
 			
